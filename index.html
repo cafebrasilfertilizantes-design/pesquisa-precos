@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Café Brasil — Pesquisa de Preços</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f5f7;color:#1a1a1a;min-height:100vh;padding:1rem}
+.container{max-width:720px;margin:0 auto}
+
+.header{background:#1a6b2f;border-radius:12px;overflow:hidden;margin-bottom:1.25rem}
+.header-band{background:#c8960a;height:6px}
+.header-content{padding:1.25rem 1.5rem;display:flex;align-items:center;gap:1rem}
+.header-logo{width:48px;height:48px;border-radius:8px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.3);flex-shrink:0}
+.header-logo i{font-size:26px;color:#fff}
+.header-titles{flex:1}
+.header-titles h1{font-size:17px;font-weight:600;color:#fff}
+.header-titles p{font-size:12px;color:rgba(255,255,255,0.7);margin-top:2px}
+.header-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;font-size:12px;color:rgba(255,255,255,0.9);white-space:nowrap}
+
+.intro-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:0.75rem}
+.intro-text{font-size:13.5px;color:#6b7280;line-height:1.7}
+.intro-text strong{color:#1a1a1a;font-weight:600}
+
+.confidential{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:0.75rem 1rem;margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:10px}
+.confidential i{font-size:18px;color:#dc2626;margin-top:1px;flex-shrink:0}
+.confidential p{font-size:12.5px;color:#dc2626;line-height:1.5}
+
+.progress-bar{display:flex;margin-bottom:1.25rem;border-radius:8px;overflow:hidden;border:1px solid #e5e7eb}
+.progress-step{flex:1;padding:8px 4px;text-align:center;font-size:11px;color:#9ca3af;background:#f9fafb;border-right:1px solid #e5e7eb;transition:all 0.2s}
+.progress-step:last-child{border-right:none}
+.progress-step.active{background:#1a6b2f;color:#fff;font-weight:600}
+.progress-step.done{background:#f0fdf4;color:#16a34a}
+.progress-step .step-num{display:block;font-size:14px;font-weight:700;margin-bottom:1px}
+
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1rem}
+.card-title{font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.card-title i{font-size:16px;color:#1a6b2f}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:12px;color:#6b7280;font-weight:600}
+.form-group label span.req{color:#dc2626}
+.form-group select,.form-group input[type=text],.form-group input[type=number]{width:100%;font-size:13px;padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#1a1a1a;outline:none;transition:border 0.15s}
+.form-group select:focus,.form-group input:focus{border-color:#1a6b2f;box-shadow:0 0 0 3px rgba(26,107,47,0.1)}
+.auto-field{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:8px 10px;font-size:13px;color:#9ca3af;min-height:36px;display:flex;align-items:center}
+.auto-field.filled{color:#1a1a1a;background:#eff6ff;border-color:#bfdbfe}
+
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:1rem}
+.product-card{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px;cursor:pointer;transition:all 0.15s;text-align:center}
+.product-card:hover{border-color:#1a6b2f;background:#f0fdf4}
+.product-card.selected{border-color:#1a6b2f;background:#f0fdf4;border-width:2px}
+.product-card .prod-name{font-size:12px;font-weight:700;color:#1a1a1a;margin-bottom:3px}
+.product-card .prod-cat{font-size:10px;color:#9ca3af}
+
+.competitor-list{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem}
+.competitor-item{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.15s}
+.competitor-item:hover{border-color:#d1d5db;background:#f3f4f6}
+.competitor-item.selected{border-color:#c8960a;border-width:2px;background:#fffbeb}
+.rank-badge{width:24px;height:24px;border-radius:50%;background:#fff;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#9ca3af;flex-shrink:0}
+.competitor-item.selected .rank-badge{background:#c8960a;border-color:#c8960a;color:#fff}
+.comp-name{font-size:13px;font-weight:600;color:#1a1a1a}
+.comp-fab{font-size:11px;color:#9ca3af}
+.competitor-dose{font-size:11px;color:#1d4ed8;background:#eff6ff;border-radius:6px;padding:3px 8px;white-space:nowrap;margin-left:auto}
+
+.payment-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+.payment-opt{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:10px 14px;cursor:pointer;text-align:center;transition:all 0.15s;font-size:13px;color:#6b7280}
+.payment-opt:hover{border-color:#d1d5db}
+.payment-opt.selected{border-color:#1a6b2f;border-width:2px;color:#1a6b2f;font-weight:600;background:#f0fdf4}
+.payment-opt i{font-size:18px;display:block;margin:0 auto 5px}
+
+.source-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px;margin-bottom:8px}
+.source-chip{background:#f9fafb;border:1px solid #e5e7eb;border-radius:20px;padding:5px 10px;font-size:12px;color:#6b7280;cursor:pointer;text-align:center;transition:all 0.15s}
+.source-chip:hover{border-color:#d1d5db}
+.source-chip.selected{border-color:#1a6b2f;color:#1a6b2f;font-weight:600;background:#f0fdf4}
+
+.btn-primary{background:#1a6b2f;border:none;color:#fff;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all 0.15s;width:100%;justify-content:center}
+.btn-primary:hover{background:#2d8a45}
+.btn-primary:active{transform:scale(0.98)}
+.btn-primary:disabled{background:#9ca3af;cursor:not-allowed;transform:none}
+.btn-secondary{background:#fff;border:1px solid #d1d5db;color:#374151;border-radius:8px;padding:9px 16px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;font-weight:500}
+.btn-secondary:hover{background:#f9fafb}
+
+.error-msg{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;font-size:12.5px;color:#dc2626;margin-top:8px;display:none;align-items:center;gap:6px}
+.error-msg i{font-size:14px;flex-shrink:0}
+.error-msg.visible{display:flex}
+
+.summary-table{width:100%;font-size:13px;border-collapse:collapse}
+.summary-table tr{border-bottom:1px solid #f3f4f6}
+.summary-table tr:last-child{border-bottom:none}
+.summary-table td{padding:8px 4px;color:#6b7280;vertical-align:top}
+.summary-table td:first-child{color:#374151;font-weight:600;width:45%}
+.summary-table td:last-child{text-align:right;color:#1a1a1a}
+
+.tab-nav{display:flex;border-bottom:1px solid #e5e7eb;margin-bottom:1rem}
+.tab-btn{padding:9px 18px;font-size:13px;color:#9ca3af;background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.15s;font-weight:500}
+.tab-btn.active{color:#1a6b2f;border-bottom-color:#1a6b2f;font-weight:700}
+
+.record-item{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:center;margin-bottom:8px}
+.rec-id{font-size:11px;color:#9ca3af;font-family:monospace;font-weight:600}
+.rec-main strong{font-size:13px;font-weight:700;color:#1a1a1a;display:block}
+.rec-meta{font-size:11px;color:#9ca3af;margin-top:2px}
+.rec-value{text-align:right}
+.rec-price{font-size:14px;font-weight:700;color:#1a1a1a}
+.rec-custo{font-size:11px;color:#9ca3af}
+
+.success-screen{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:2rem;text-align:center}
+.success-screen .si{font-size:48px;color:#16a34a;margin-bottom:1rem;display:block}
+.success-screen h3{font-size:18px;font-weight:700;color:#15803d;margin-bottom:0.5rem}
+.success-screen p{font-size:13px;color:#6b7280;margin-bottom:1.5rem}
+.success-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+
+.sending-overlay{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;display:none;align-items:center;gap:10px;margin-top:1rem;font-size:13px;color:#92400e}
+.sending-overlay.visible{display:flex}
+.spinner{width:18px;height:18px;border:2px solid #fde68a;border-top-color:#c8960a;border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.send-error{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 16px;display:none;align-items:center;gap:10px;margin-top:1rem;font-size:13px;color:#dc2626}
+.send-error.visible{display:flex}
+
+.empty-state{text-align:center;padding:2.5rem;color:#9ca3af;font-size:13px}
+.empty-state i{font-size:36px;display:block;margin-bottom:0.75rem;color:#d1d5db}
+
+.sublabel{font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;font-weight:600}
+
+@media(max-width:500px){
+  .form-row{grid-template-columns:1fr}
+  .header-badge{display:none}
+  .record-item{grid-template-columns:40px 1fr auto}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <div class="header-band"></div>
+  <div class="header-content">
+    <div class="header-logo"><i class="ti ti-plant-2"></i></div>
+    <div class="header-titles">
+      <h1>Café Brasil Fertilizantes</h1>
+      <p>Plataforma de Inteligência Competitiva — Pesquisa de Preços</p>
+    </div>
+    <div class="header-badge"><i class="ti ti-shield-lock" style="font-size:13px;vertical-align:-1px;margin-right:4px"></i>Uso interno</div>
+  </div>
+</div>
+
+<div class="intro-card">
+  <p class="intro-text">A <strong>qualidade da inteligência competitiva</strong> da Café Brasil começa no campo. Cada pesquisa registrada aqui alimenta análises estratégicas de pricing, posicionamento e decisão comercial. <strong>Preencha com atenção e precisão</strong> — a acuracidade dos dados define a força das nossas ações de mercado. <strong>Registre apenas preços confirmados na fonte.</strong></p>
+</div>
+
+<div class="confidential">
+  <i class="ti ti-lock"></i>
+  <p><strong>Informação confidencial.</strong> Os dados registrados são de uso exclusivamente interno da Café Brasil Fertilizantes. É proibido o compartilhamento, reprodução ou divulgação a terceiros. O uso indevido constitui violação às políticas internas de governança e sigilo.</p>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('form')" id="tab-form">Nova pesquisa</button>
+  <button class="tab-btn" onclick="switchTab('records')" id="tab-records">Registros da sessão <span id="rec-count" style="background:#f3f4f6;border:1px solid #e5e7eb;border-radius:10px;padding:1px 7px;font-size:11px;margin-left:4px">0</span></button>
+</div>
+
+<!-- FORMULÁRIO -->
+<div id="pane-form">
+  <div class="progress-bar">
+    <div class="progress-step active" id="ps1"><span class="step-num">1</span>Identificação</div>
+    <div class="progress-step" id="ps2"><span class="step-num">2</span>Produto CB</div>
+    <div class="progress-step" id="ps3"><span class="step-num">3</span>Concorrente</div>
+    <div class="progress-step" id="ps4"><span class="step-num">4</span>Preço</div>
+    <div class="progress-step" id="ps5"><span class="step-num">5</span>Revisão</div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div id="step1">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-user-circle"></i>Identificação do vendedor</div>
+      <div class="form-group" style="margin-bottom:1rem">
+        <label>Vendedor / responsável <span class="req">*</span></label>
+        <select id="sel-vendedor" onchange="onVendedorChange()">
+          <option value="">— Selecione o vendedor —</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Regional</label>
+          <div class="auto-field" id="auto-regional">—</div>
+        </div>
+        <div class="form-group">
+          <label>Região</label>
+          <div class="auto-field" id="auto-regiao">—</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Fonte do preço <span class="req">*</span></label>
+          <div class="sublabel">Cooperativas</div>
+          <div class="source-grid" id="source-chips"></div>
+          <input type="text" id="inp-fonte" placeholder="Ou digite: revenda, distribuidor, cliente...">
+        </div>
+        <div class="form-group">
+          <label>Data da coleta</label>
+          <div class="auto-field filled" id="auto-data"></div>
+        </div>
+      </div>
+      <div class="error-msg" id="err1"><i class="ti ti-alert-circle"></i>Selecione o vendedor e informe a fonte do preço.</div>
+      <button class="btn-primary" onclick="goStep(2)" style="margin-top:1rem"><i class="ti ti-arrow-right"></i>Avançar para seleção de produto</button>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="step2" style="display:none">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-flask"></i>Selecione o produto Café Brasil</div>
+      <div class="product-grid" id="product-grid"></div>
+      <div class="error-msg" id="err2"><i class="ti ti-alert-circle"></i>Selecione um produto para continuar.</div>
+      <div style="display:flex;gap:8px;margin-top:1rem">
+        <button class="btn-secondary" onclick="goStep(1)"><i class="ti ti-arrow-left"></i>Voltar</button>
+        <button class="btn-primary" onclick="goStep(3)"><i class="ti ti-arrow-right"></i>Ver concorrentes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div id="step3" style="display:none">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-building-store"></i>Selecione o produto concorrente</div>
+      <div id="sel-prod-banner" style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 12px;font-size:12.5px;color:#1d4ed8;margin-bottom:1rem;display:flex;align-items:center;gap:8px">
+        <i class="ti ti-flask" style="font-size:15px"></i>
+        <span id="sel-prod-label">—</span>
+      </div>
+      <div class="competitor-list" id="competitor-list"></div>
+      <div class="error-msg" id="err3"><i class="ti ti-alert-circle"></i>Selecione um concorrente para continuar.</div>
+      <div style="display:flex;gap:8px;margin-top:1rem">
+        <button class="btn-secondary" onclick="goStep(2)"><i class="ti ti-arrow-left"></i>Voltar</button>
+        <button class="btn-primary" onclick="goStep(4)"><i class="ti ti-arrow-right"></i>Informar preço</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div id="step4" style="display:none">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-currency-dollar"></i>Informar preço coletado</div>
+      <div id="comp-context" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;margin-bottom:1rem;font-size:12.5px;color:#6b7280">
+        <span id="ctx-label">—</span>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Dose praticada (L ou kg/ha)</label>
+          <div class="auto-field filled" id="auto-dose">—</div>
+        </div>
+        <div class="form-group">
+          <label>Preço R$/L ou kg <span class="req">*</span></label>
+          <input type="number" id="inp-preco" placeholder="Ex: 48.50" min="0" step="0.01">
+        </div>
+      </div>
+      <div style="margin-bottom:1rem">
+        <label style="font-size:12px;color:#6b7280;font-weight:600;display:block;margin-bottom:8px">Condição de pagamento <span class="req">*</span></label>
+        <div class="payment-grid">
+          <div class="payment-opt" onclick="selectPayment('À vista',this)"><i class="ti ti-coin"></i>À vista</div>
+          <div class="payment-opt" onclick="selectPayment('A prazo',this)"><i class="ti ti-calendar-due"></i>A prazo</div>
+        </div>
+      </div>
+      <div class="error-msg" id="err4"><i class="ti ti-alert-circle"></i>Informe o preço e a condição de pagamento.</div>
+      <div style="display:flex;gap:8px;margin-top:1rem">
+        <button class="btn-secondary" onclick="goStep(3)"><i class="ti ti-arrow-left"></i>Voltar</button>
+        <button class="btn-primary" onclick="goStep(5)"><i class="ti ti-arrow-right"></i>Revisar e enviar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div id="step5" style="display:none">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-clipboard-check"></i>Revisão da pesquisa</div>
+      <table class="summary-table" id="summary-table"></table>
+      <div class="sending-overlay" id="sending-overlay">
+        <div class="spinner"></div>
+        Gravando na base de dados...
+      </div>
+      <div class="send-error" id="send-error">
+        <i class="ti ti-alert-triangle" style="font-size:18px;flex-shrink:0"></i>
+        <span>Falha ao gravar. Verifique sua conexão e tente novamente.</span>
+      </div>
+      <div class="error-msg" id="err5"><i class="ti ti-alert-circle"></i>Já existe um registro para este produto/concorrente nesta sessão.</div>
+      <div style="display:flex;gap:8px;margin-top:1rem">
+        <button class="btn-secondary" onclick="goStep(4)"><i class="ti ti-arrow-left"></i>Corrigir</button>
+        <button class="btn-primary" onclick="submitRecord()" id="btn-submit"><i class="ti ti-send"></i>Confirmar e registrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCESSO -->
+  <div id="step-success" style="display:none">
+    <div class="success-screen">
+      <i class="ti ti-circle-check si"></i>
+      <h3>Pesquisa registrada com sucesso!</h3>
+      <p>Os dados foram gravados na base de inteligência competitiva da Café Brasil.</p>
+      <div class="success-btns">
+        <button class="btn-secondary" onclick="novaColeta()"><i class="ti ti-plus"></i>Nova coleta — mesmo produto</button>
+        <button class="btn-primary" onclick="resetForm()" style="width:auto"><i class="ti ti-refresh"></i>Nova pesquisa completa</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTROS -->
+<div id="pane-records" style="display:none">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <span style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.07em">Registros desta sessão</span>
+    <button class="btn-secondary" onclick="exportCSV()" style="font-size:12px;padding:6px 12px"><i class="ti ti-download"></i>Exportar CSV</button>
+  </div>
+  <div id="records-container">
+    <div class="empty-state"><i class="ti ti-inbox"></i>Nenhuma pesquisa registrada ainda.</div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbw5APn92FYqLly49jOteNWwgTVsOq8ygoVMG3_VpENxcXk3YmZcLPvOCDxwZ_JlkpUB/exec";
+
+const VENDEDORES=[
+  {nome:"Angelo Americo Silva De Avelar",regional:"Regional Sul De Minas I",regiao:"Região Guaranésia"},
+  {nome:"Antonino Dias Rosa Neto",regional:"Regional Cerrado",regiao:"Região Serra Do Salitre"},
+  {nome:"Bruno Eduardo De Oliveira",regional:"Regional Sul De Minas I",regiao:"Região São Pedro da União"},
+  {nome:"Cairo Benedito Botazini",regional:"Regional Sul De Minas IV",regiao:"Região São Gonçalo do Sapucaí"},
+  {nome:"Carlos Henrique Evaristo",regional:"Regional Sul De Minas I",regiao:"Região Guaxupé"},
+  {nome:"Cleber Oliveira Pereira",regional:"Regional Cerrado",regiao:"Região Araxá"},
+  {nome:"Douglas Almeida Rodrigues Pereira",regional:"Regional Sul ES / Zona Da Mata",regiao:"Região Lajinha"},
+  {nome:"Fagner da Cunha Julio",regional:"Regional Sul ES / Zona Da Mata",regiao:"Região Castelo"},
+  {nome:"Felipe Gonçalves de Lima Dias",regional:"Regional Sul De Minas IV",regiao:"Região Sul De Minas IV"},
+  {nome:"Felipe Magro Da Silva",regional:"Regional Sul De Minas I",regiao:"Região Monte Santo De Minas"},
+  {nome:"Glauler De Freitas Scalco",regional:"Regional Sul De Minas IV",regiao:"Região Machado"},
+  {nome:"Gustavo Vilela Reis",regional:"Regional Sul De Minas III",regiao:"Região Três Pontas"},
+  {nome:"Jardel Caliman Novaes",regional:"Regional Norte ES / Sul da BA",regiao:"Região Santa Maria Jetiba-Es"},
+  {nome:"Jean Felipe Silva Andrade",regional:"Regional Sul De Minas III",regiao:"Região Varginha"},
+  {nome:"Joao Guilherme De Souza Pereira",regional:"Regional Cerrado",regiao:"Região Patrocinio"},
+  {nome:"João Batista Pereira Neto",regional:"Regional Sul De Minas II",regiao:"Região Campos Gerais"},
+  {nome:"João Henrique Strelow Barbosa",regional:"Regional Norte ES / Sul da BA",regiao:"Região Santa Maria Jetiba-Es"},
+  {nome:"João Lucas Pereira Gonçalves",regional:"Regional Sul De Minas IV",regiao:"Região Carmo de Minas"},
+  {nome:"Jose Carlos Dias Junior",regional:"Regional Cerrado",regiao:"Região Do Cerrado"},
+  {nome:"Karina Pereira Lasmar",regional:"Regional Sul De Minas V",regiao:"Região Santo Antonio Do Amparo"},
+  {nome:"Leo Gumercindo Brandao",regional:"Regional Sul De Minas IV",regiao:"Região Machado"},
+  {nome:"Lucas Basseti",regional:"Regional Norte ES / Sul da BA",regiao:"Região Teixeira Freitas-Ba"},
+  {nome:"Lucas Heleno Bachiao Dolivo",regional:"Regional Sul De Minas I",regiao:"Região Campestre"},
+  {nome:"Luciano Neder Gonçalves",regional:"Gestão De Vendas",regiao:"Gestão De Vendas"},
+  {nome:"Marco Antonio Ruiz Santana",regional:"Regional Cb-Br",regiao:"Região Cb-Br"},
+  {nome:"Marcelo De Carvalho Rezende",regional:"Regional Sul De Minas III",regiao:"Região Sul De Minas III"},
+  {nome:"Marcelo Vitor Neves",regional:"Regional Sul De Minas III",regiao:"Região Coqueiral"},
+  {nome:"Marcos Vinicius Da Silva",regional:"Regional Sul ES / Zona Da Mata",regiao:"Região Sul ES / Zona Da Mata"},
+  {nome:"Marko Antonio Ruela Hipolito",regional:"Regional Sul De Minas I",regiao:"Região Nova Resende"},
+  {nome:"Paulo Augusto Martins Freire",regional:"Regional Norte ES / Sul da BA",regiao:"Região Norte Do Espírito Santo"},
+  {nome:"Reinaldo Ribeiro Senedese",regional:"Regional Sul De Minas I",regiao:"Região Sul De Minas I"},
+  {nome:"Remo Gouveia Franco",regional:"Regional Sul De Minas III",regiao:"Região Alfenas"},
+  {nome:"Sandro Da Silva Oliveira Junior",regional:"Regional Sul De Minas IV",regiao:"Região Machado"},
+  {nome:"Sandro Leyser Batista",regional:"Regional Sul De Minas II",regiao:"Região Sul De Minas II"},
+  {nome:"Sidney Tanaca Junior",regional:"Regional Norte ES / Sul da BA",regiao:"Região São Gabriel Da Palha-Es"},
+  {nome:"Tauan Melchiori",regional:"Regional Sul De Minas I",regiao:"Região Carmo Do Rio Claro"},
+  {nome:"Tatiane Pimentel Gedgeski",regional:"Regional Norte ES / Sul da BA",regiao:"Região Nova Venecia-Es"},
+  {nome:"Tulio Lopes Pereira",regional:"Diretoria De Vendas",regiao:"Diretoria De Vendas"}
+];
+
+const COOPERATIVAS=["Cocapec","Cooabriel","Coocafé","Coocatrel","Coopama","Cooperbom","Coopercamp","Coopercitrus","Coopervass","Cooxupé","Minasul","Outras"];
+
+const PRODUTOS=[
+  {id:"RENEW",nome:"RENEW",cat:"Nutrição",dose:1.5,custo:82.2},
+  {id:"POWER PLANT",nome:"POWER PLANT",cat:"Nutrição",dose:0.5,custo:65},
+  {id:"PERFIL",nome:"PERFIL",cat:"Condicionador",dose:7,custo:344.4},
+  {id:"FLORADA",nome:"FLORADA",cat:"Florada",dose:1,custo:46},
+  {id:"TURBO Q",nome:"TURBO Q",cat:"Indutor Resistência",dose:1.5,custo:86.25},
+  {id:"SINK",nome:"SINK",cat:"Terminação de Grãos",dose:2,custo:null},
+  {id:"ALIANCE FULL",nome:"ALIANCE FULL",cat:"Adjuvante",dose:0.05,custo:4.97},
+  {id:"TRICHO ADVANCED",nome:"TRICHO ADVANCED",cat:"Biológico",dose:0.3,custo:105},
+  {id:"BONVERO",nome:"BONVERO",cat:"Biológico",dose:0.3,custo:63}
+];
+
+const CONCORRENTES={
+  "RENEW":[
+    {rank:1,id:"C002",nome:"Profol Exclusive",fab:"ICL",dose:"2,0 L/ha",doseNum:2},
+    {rank:2,id:"C001",nome:"DaCafé Cerrado",fab:"Stoller",dose:"3,0 – 4,0 L/ha",doseNum:3.5},
+    {rank:3,id:"C003",nome:"CP Nutri Perenes",fab:"AgroCP",dose:"3,0 kg/ha",doseNum:3},
+    {rank:4,id:"C004",nome:"Kafé Vegetação",fab:"Cooxupé",dose:"5,0 L/ha",doseNum:5},
+    {rank:5,id:"C005",nome:"Torpedo Gold",fab:"Oxiquímica",dose:"2,0 L/ha",doseNum:2}
+  ],
+  "POWER PLANT":[
+    {rank:1,id:"C006",nome:"Stimulate",fab:"Stoller",dose:"0,4 – 0,5 L/ha",doseNum:0.45},
+    {rank:2,id:"C003",nome:"CP Nutri Perenes",fab:"AgroCP",dose:"3,0 kg/ha",doseNum:3},
+    {rank:3,id:"C007",nome:"Triplus Perenes",fab:"ICL",dose:"0,5 L/ha",doseNum:0.5},
+    {rank:4,id:"C008",nome:"Promove",fab:"AgroCP",dose:"0,5 L/ha",doseNum:0.5},
+    {rank:5,id:"C009",nome:"Fertiactyl GZ",fab:"Timac",dose:"1,0 L/ha",doseNum:1}
+  ],
+  "PERFIL":[
+    {rank:1,id:"C011",nome:"CP Humic",fab:"AgroCP",dose:"10,0 L/ha",doseNum:10},
+    {rank:2,id:"C012",nome:"Prospera Fluid",fab:"Cooxupé",dose:"10,0 L/ha",doseNum:10},
+    {rank:3,id:"C013",nome:"Root Top",fab:"Stoller",dose:"8,0 – 10,0 L/ha",doseNum:9},
+    {rank:4,id:"C004",nome:"Kafé Vegetação",fab:"Cooxupé",dose:"5,0 L/ha",doseNum:5},
+    {rank:5,id:"C014",nome:"CooperCrop",fab:"Alltech",dose:"1,0 L/ha",doseNum:1}
+  ],
+  "FLORADA":[
+    {rank:1,id:"C010",nome:"Kafé Florada",fab:"Cooxupé",dose:"5,0 L/ha",doseNum:5},
+    {rank:2,id:"C006",nome:"Stimulate",fab:"Stoller",dose:"0,4 – 0,5 L/ha",doseNum:0.45},
+    {rank:3,id:"C008",nome:"Promove",fab:"AgroCP",dose:"0,5 L/ha",doseNum:0.5},
+    {rank:4,id:"C007",nome:"Triplus Perenes",fab:"ICL",dose:"0,5 L/ha",doseNum:0.5},
+    {rank:5,id:"C009",nome:"Fertiactyl GZ",fab:"Timac",dose:"1,0 L/ha",doseNum:1}
+  ],
+  "TURBO Q":[
+    {rank:1,id:"C015",nome:"Bayfolan",fab:"Bayer",dose:"1,0 L/ha",doseNum:1},
+    {rank:2,id:"C016",nome:"Kellus Copper",fab:"ICL",dose:"1,0 L/ha",doseNum:1},
+    {rank:3,id:"C017",nome:"Auge",fab:"Syngenta",dose:"1,0 – 2,0 L/ha",doseNum:1.5},
+    {rank:4,id:"C005",nome:"Torpedo Gold",fab:"Oxiquímica",dose:"2,0 L/ha",doseNum:2},
+    {rank:5,id:"C014",nome:"CooperCrop",fab:"Alltech",dose:"1,0 L/ha",doseNum:1}
+  ],
+  "SINK":[
+    {rank:1,id:"C006",nome:"Stimulate",fab:"Stoller",dose:"0,4 – 0,5 L/ha",doseNum:0.45},
+    {rank:2,id:"C018",nome:"Mover",fab:"Stoller",dose:"3,0 L/ha",doseNum:3},
+    {rank:3,id:"C019",nome:"Translok",fab:"ICL",dose:"3,0 L/ha",doseNum:3},
+    {rank:4,id:"C020",nome:"Kafé Granação",fab:"Cooxupé",dose:"5,0 L/ha",doseNum:5},
+    {rank:5,id:"C009",nome:"Fertiactyl GZ",fab:"Timac",dose:"1,0 L/ha",doseNum:1}
+  ],
+  "ALIANCE FULL":[
+    {rank:1,id:"C021",nome:"Essencial Neutro",fab:"AgroCP",dose:"50–100 mL/ha",doseNum:0.075},
+    {rank:2,id:"C022",nome:"Adjust Silver",fab:"Stoller",dose:"50–100 mL/ha",doseNum:0.075},
+    {rank:3,id:"C023",nome:"Helper Neutrum",fab:"ICL",dose:"0,05 L/ha",doseNum:0.05}
+  ],
+  "TRICHO ADVANCED":[
+    {rank:1,id:"C024",nome:"Tricho Turbo",fab:"Vittia",dose:"0,5 L/ha",doseNum:0.5},
+    {rank:2,id:"C025",nome:"Trichodermil",fab:"Koppert",dose:"0,5 – 1,0 L/ha",doseNum:0.75},
+    {rank:3,id:"C026",nome:"Quality",fab:"Lallemand",dose:"0,2 kg/ha",doseNum:0.2}
+  ],
+  "BONVERO":[
+    {rank:1,id:"C024",nome:"Tricho Turbo",fab:"Vittia",dose:"0,5 L/ha",doseNum:0.5},
+    {rank:2,id:"C025",nome:"Trichodermil",fab:"Koppert",dose:"0,5 – 1,0 L/ha",doseNum:0.75},
+    {rank:3,id:"C026",nome:"Quality",fab:"Lallemand",dose:"0,2 kg/ha",doseNum:0.2}
+  ]
+};
+
+let state={vendedor:null,fonte:"",selectedProd:null,selectedComp:null,preco:null,pagamento:null,records:[]};
+let recIdCounter=1;
+
+function init(){
+  const sel=document.getElementById("sel-vendedor");
+  VENDEDORES.forEach(v=>{
+    const o=document.createElement("option");
+    o.value=v.nome; o.textContent=v.nome;
+    sel.appendChild(o);
+  });
+  document.getElementById("auto-data").textContent=new Date().toLocaleDateString("pt-BR");
+  renderSourceChips();
+  renderProducts();
+}
+
+function renderSourceChips(){
+  const c=document.getElementById("source-chips");
+  COOPERATIVAS.forEach(coop=>{
+    const d=document.createElement("div");
+    d.className="source-chip"; d.textContent=coop;
+    d.onclick=()=>{
+      document.querySelectorAll(".source-chip").forEach(x=>x.classList.remove("selected"));
+      d.classList.add("selected");
+      document.getElementById("inp-fonte").value=coop;
+      state.fonte=coop;
+    };
+    c.appendChild(d);
+  });
+}
+
+function onVendedorChange(){
+  const nome=document.getElementById("sel-vendedor").value;
+  state.vendedor=nome;
+  const v=VENDEDORES.find(x=>x.nome===nome);
+  const ar=document.getElementById("auto-regional");
+  const are=document.getElementById("auto-regiao");
+  if(v){
+    ar.textContent=v.regional; ar.classList.add("filled");
+    are.textContent=v.regiao; are.classList.add("filled");
+  } else {
+    ar.textContent="—"; ar.classList.remove("filled");
+    are.textContent="—"; are.classList.remove("filled");
+  }
+}
+
+function renderProducts(){
+  const g=document.getElementById("product-grid");
+  PRODUTOS.forEach(p=>{
+    const d=document.createElement("div");
+    d.className="product-card"; d.id="prod-"+p.id;
+    d.innerHTML=`<div class="prod-name">${p.nome}</div><div class="prod-cat">${p.cat}</div>`;
+    d.onclick=()=>{
+      document.querySelectorAll(".product-card").forEach(c=>c.classList.remove("selected"));
+      d.classList.add("selected");
+      state.selectedProd=p; state.selectedComp=null;
+    };
+    g.appendChild(d);
+  });
+}
+
+function renderCompetitors(){
+  const list=document.getElementById("competitor-list");
+  list.innerHTML="";
+  const p=state.selectedProd;
+  document.getElementById("sel-prod-label").textContent=`${p.nome} — ${p.cat}`;
+  (CONCORRENTES[p.id]||[]).forEach(c=>{
+    const d=document.createElement("div");
+    d.className="competitor-item"; d.id="comp-"+c.id;
+    d.innerHTML=`<div class="rank-badge">${c.rank}</div><div style="flex:1"><div class="comp-name">${c.nome}</div><div class="comp-fab">${c.fab}</div></div><div class="competitor-dose">${c.dose}</div>`;
+    d.onclick=()=>{
+      document.querySelectorAll(".competitor-item").forEach(x=>x.classList.remove("selected"));
+      d.classList.add("selected");
+      state.selectedComp=c;
+    };
+    list.appendChild(d);
+  });
+}
+
+function selectPayment(val,el){
+  state.pagamento=val;
+  document.querySelectorAll(".payment-opt").forEach(x=>x.classList.remove("selected"));
+  el.classList.add("selected");
+}
+
+function buildSummary(){
+  const p=state.selectedProd, c=state.selectedComp;
+  const rows=[
+    ["Vendedor",state.vendedor],
+    ["Fonte do preço",document.getElementById("inp-fonte").value||state.fonte],
+    ["Data da coleta",document.getElementById("auto-data").textContent],
+    ["Produto Café Brasil",`${p.nome} (${p.cat})`],
+    ["Produto concorrente",`${c.nome} — ${c.fab}`],
+    ["Dose praticada",c.dose],
+    ["Preço R$/L ou kg",`R$ ${state.preco.toFixed(2)}`],
+    ["Condição de pagamento",state.pagamento]
+  ];
+  document.getElementById("summary-table").innerHTML=
+    rows.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join("");
+}
+
+function isDuplicate(){
+  return state.records.some(r=>r.prodId===state.selectedProd.id&&r.compId===state.selectedComp.id&&r.vendedor===state.vendedor);
+}
+
+async function submitRecord(){
+  if(isDuplicate()){document.getElementById("err5").classList.add("visible");return}
+  const p=state.selectedProd, c=state.selectedComp;
+  const custo=parseFloat((state.preco*c.doseNum).toFixed(2));
+  const record={
+    id:"PQ"+String(recIdCounter++).padStart(4,"0"),
+    data:new Date().toLocaleDateString("pt-BR"),
+    vendedor:state.vendedor,
+    regional:VENDEDORES.find(v=>v.nome===state.vendedor)?.regional||"",
+    regiao:VENDEDORES.find(v=>v.nome===state.vendedor)?.regiao||"",
+    prodId:p.id, prodNome:p.nome, prodCat:p.cat, custoCB:p.custo,
+    compId:c.id, compNome:c.nome, fab:c.fab, dose:c.dose, doseNum:c.doseNum,
+    preco:state.preco, custo:custo, pagamento:state.pagamento,
+    fonte:document.getElementById("inp-fonte").value||state.fonte
+  };
+
+  const btn=document.getElementById("btn-submit");
+  const overlay=document.getElementById("sending-overlay");
+  const sendErr=document.getElementById("send-error");
+  btn.disabled=true;
+  overlay.classList.add("visible");
+  sendErr.classList.remove("visible");
+
+  try {
+    await fetch(SHEET_URL, {
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(record)
+    });
+    state.records.push(record);
+    document.getElementById("rec-count").textContent=state.records.length;
+    overlay.classList.remove("visible");
+    showStep("step-success");
+    updateProgress(6);
+    renderRecords();
+  } catch(err){
+    overlay.classList.remove("visible");
+    sendErr.classList.add("visible");
+    btn.disabled=false;
+  }
+}
+
+function novaColeta(){
+  const prod=state.selectedProd;
+  state={...state,selectedComp:null,preco:null,pagamento:null};
+  document.querySelectorAll(".competitor-item").forEach(x=>x.classList.remove("selected"));
+  document.querySelectorAll(".payment-opt").forEach(x=>x.classList.remove("selected"));
+  document.getElementById("inp-preco").value="";
+  document.querySelectorAll(".error-msg").forEach(e=>e.classList.remove("visible"));
+  if(prod){
+    const el=document.getElementById("prod-"+prod.id);
+    if(el){ state.selectedProd=prod; el.classList.add("selected"); }
+  }
+  renderCompetitors();
+  goStepDirect(3);
+}
+
+function resetForm(){
+  state={...state,selectedProd:null,selectedComp:null,preco:null,pagamento:null};
+  document.getElementById("sel-vendedor").value="";
+  document.getElementById("auto-regional").textContent="—"; document.getElementById("auto-regional").classList.remove("filled");
+  document.getElementById("auto-regiao").textContent="—"; document.getElementById("auto-regiao").classList.remove("filled");
+  document.getElementById("inp-fonte").value=""; state.fonte="";
+  document.querySelectorAll(".source-chip,.product-card,.competitor-item,.payment-opt").forEach(x=>x.classList.remove("selected"));
+  document.querySelectorAll(".error-msg").forEach(e=>e.classList.remove("visible"));
+  document.getElementById("sending-overlay").classList.remove("visible");
+  document.getElementById("send-error").classList.remove("visible");
+  goStepDirect(1);
+}
+
+function goStep(n){
+  document.querySelectorAll(".error-msg").forEach(e=>e.classList.remove("visible"));
+  if(n===2){
+    state.fonte=document.getElementById("inp-fonte").value||state.fonte;
+    if(!state.vendedor||!state.fonte){document.getElementById("err1").classList.add("visible");return}
+  }
+  if(n===3){
+    if(!state.selectedProd){document.getElementById("err2").classList.add("visible");return}
+    renderCompetitors();
+  }
+  if(n===4){
+    if(!state.selectedComp){document.getElementById("err3").classList.add("visible");return}
+    document.getElementById("ctx-label").innerHTML=`<strong>${state.selectedComp.nome}</strong> (${state.selectedComp.fab})`;
+    document.getElementById("auto-dose").textContent=state.selectedComp.dose;
+    document.getElementById("inp-preco").value="";
+    document.querySelectorAll(".payment-opt").forEach(x=>x.classList.remove("selected"));
+    state.preco=null; state.pagamento=null;
+  }
+  if(n===5){
+    const pv=parseFloat(document.getElementById("inp-preco").value);
+    if(isNaN(pv)||pv<=0||!state.pagamento){document.getElementById("err4").classList.add("visible");return}
+    state.preco=pv;
+    document.getElementById("btn-submit").disabled=false;
+    document.getElementById("send-error").classList.remove("visible");
+    buildSummary();
+  }
+  goStepDirect(n);
+}
+
+function goStepDirect(n){
+  ["step1","step2","step3","step4","step5","step-success"].forEach((s,i)=>{
+    document.getElementById(s).style.display=(i+1===n?"block":"none");
+  });
+  updateProgress(n);
+}
+
+function showStep(id){
+  ["step1","step2","step3","step4","step5","step-success"].forEach(s=>{
+    document.getElementById(s).style.display=(s===id?"block":"none");
+  });
+}
+
+function updateProgress(n){
+  for(let i=1;i<=5;i++){
+    const el=document.getElementById("ps"+i);
+    el.classList.remove("active","done");
+    if(n===6) el.classList.add("done");
+    else if(i<n) el.classList.add("done");
+    else if(i===n) el.classList.add("active");
+  }
+}
+
+function switchTab(t){
+  document.getElementById("pane-form").style.display=t==="form"?"block":"none";
+  document.getElementById("pane-records").style.display=t==="records"?"block":"none";
+  document.getElementById("tab-form").classList.toggle("active",t==="form");
+  document.getElementById("tab-records").classList.toggle("active",t==="records");
+}
+
+function renderRecords(){
+  const c=document.getElementById("records-container");
+  if(!state.records.length){
+    c.innerHTML='<div class="empty-state"><i class="ti ti-inbox"></i>Nenhuma pesquisa registrada ainda.</div>';
+    return;
+  }
+  c.innerHTML=state.records.slice().reverse().map(r=>`
+    <div class="record-item">
+      <div class="rec-id">${r.id}</div>
+      <div class="rec-main">
+        <strong>${r.prodNome} × ${r.compNome}</strong>
+        <div class="rec-meta">${r.fab} · ${r.dose} · ${r.pagamento}</div>
+        <div class="rec-meta">${r.vendedor} · ${r.regiao} · ${r.fonte} · ${r.data}</div>
+      </div>
+      <div class="rec-value">
+        <div class="rec-price">R$ ${r.preco.toFixed(2)}</div>
+        <div class="rec-custo">R$ ${r.custo.toFixed(2)}/ha</div>
+      </div>
+    </div>`).join("");
+}
+
+function exportCSV(){
+  if(!state.records.length){alert("Nenhum registro para exportar.");return}
+  const h=["ID","Data","Vendedor","Regional","Região","Produto CB","Categoria CB","Produto Concorrente","Fabricante","Dose","Preço R$/L·kg","Custo/ha","Condição Pagamento","Fonte"];
+  const rows=state.records.map(r=>[r.id,r.data,r.vendedor,r.regional,r.regiao,r.prodNome,r.prodCat,r.compNome,r.fab,r.dose,r.preco,r.custo,r.pagamento,r.fonte]);
+  const csv=[h,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
+  a.download=`pesquisa_precos_cafebrasil_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+init();
+</script>
+</body>
+</html>
